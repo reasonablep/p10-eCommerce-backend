@@ -3,26 +3,91 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
-router.get('/', (req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
+// Find all tags
+
+router.get('/', async (req, res) => {
+  try {
+    const getTags = await Tag.findAll ({
+      include: [{ model: Product, through: ProductTag }],
+    });
+    res.status(200).json(getTags);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
+// Find tag by ID
+
+router.get('/:id', async (req, res) => {
+  try {
+    const getTag = await Tag.findByPk(req.params.id, {
+
+      include: [{ model: Product, through: ProductTag}
+      ]
+    });
+  if (!getTag) {
+    res.status(404).json({ message: 'No tag found' });
+  }
+  res.status(200).json(getTag);
+} catch (err) {
+  res.status(500).json (err);
+}
 });
 
-router.post('/', (req, res) => {
-  // create a new tag
+// Create a new tag
+
+router.post('/', async (req, res) => {
+  try {
+    const newTag = await Tag.create(req.body);
+    res.status(201).json(newTag);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+
 });
 
-router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+// Update tag by ID
+
+router.put('/:id', async (req, res) => {
+
+  try {
+    const updateTag = await Tag.update(req.body, {
+      where: {
+        id: req.params.id,
+      }
+    });
+if (!updateTag) {
+  res.status(404).json({ message: 'No tag found' });
+  return;
+}
+
+res.status(200).json('Tag updated successfully');
+
+  } catch(err) {
+    res.status(500).json(err);
+  }
+
 });
 
-router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+// Delete tag by ID
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleteTag = await Tag.destroy ({
+      where: {
+        id: req.params.id,
+      }
+    });
+    if (!deleteTag) {
+      res.status(404).json ({ message: 'No tag found'});
+      return;
+    }
+    res.status(200).json({ message: 'Tag deleted successfully'});
+    
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
 });
 
 module.exports = router;

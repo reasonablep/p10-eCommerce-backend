@@ -3,7 +3,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
-// Get all products
+// Find all products
 router.get('/', async (req, res) => {
   try {
     const products = await Product.findAll({
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get one product
+// Find one product by ID
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id, {
@@ -46,7 +46,6 @@ router.post('/', async (req, res) => {
   } catch (err) {
     res.status(500).json(err)
   }
-});
 
 
 /* req.body should look like this...???????????
@@ -77,7 +76,7 @@ Product.create(req.body)
     console.log(err);
     res.status(400).json(err);
   });
-
+});
 // Update product
 router.put('/:id', (req, res) => {
   // Update product data
